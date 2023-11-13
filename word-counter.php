@@ -35,7 +35,7 @@ function my_plugin_api_call($res, $action, $args) {
         $res = new stdClass();
         $res->slug = 'word-counter';
         $res->name = 'Calculadora de Traducción';
-        $res->version = '1.0.0';
+        $res->version = '1.0.1';
         $res->tested = 'WordPress 6.4.1';
         $res->requires = 'WordPress 6.0.0';
         $res->author = 'IMK';
