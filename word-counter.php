@@ -44,7 +44,7 @@ function my_plugin_api_call($res, $action, $args) {
         $res->last_updated = '2023-11-13';
         $res->sections = array(
             'description' => 'Calcula el coste de traducción según el número de palabras y las tarifas configuradas.',
-            'changelog' => '== Changelog ==\n\n= 1.0.0 =\n* Primera subida de ficheros.',
+            'changelog' => '== Changelog ==\n\n= 1.0.1 =\n* Cambios',
         );
 
         return $res;
