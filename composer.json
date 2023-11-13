@@ -1,0 +1,25 @@
+{
+    "require": {
+        "phpoffice/phppresentation": "dev-master",
+        "phpoffice/phpspreadsheet": "^1.23",
+		"phpoffice/phpword": "*",
+		"setasign/fpdi": "*",
+		 "setasign/fpdf": "*",
+        "symfony/process": "*",
+        "spatie/pdf-to-text": "^1.52",
+        "smalot/pdfparser": "^2.7",
+		"mpdf/mpdf": "^8.2"
+        
+    },
+	  "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3",
+        "phpstan/phpstan": "^1",
+        "phpstan/phpstan-phpunit": "^1",
+        "phpunit/phpunit": ">=7.5 <11.0"
+    },
+    "config": {
+        "platform": {
+            "php": "8.0"
+        }
+    }
+}
