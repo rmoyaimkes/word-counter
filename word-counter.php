@@ -2,7 +2,7 @@
 /*
 Plugin Name: Calculadora de Traducción
 Description: Calcula el coste de traducción según el número de palabras y las tarifas configuradas.
-Version: 1.0.0
+Version: 1.0.1
 */
 
 ini_set('display_errors', 1);
