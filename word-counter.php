@@ -35,7 +35,7 @@ function my_plugin_api_call($res, $action, $args) {
         $res = new stdClass();
         $res->slug = 'word-counter';
         $res->name = 'Calculadora de Traducción';
-        $res->version = '1.0.1';
+        $res->version = '1.0.0';
         $res->tested = 'WordPress 6.4.1';
         $res->requires = 'WordPress 6.0.0';
         $res->author = 'IMK';
@@ -44,7 +44,7 @@ function my_plugin_api_call($res, $action, $args) {
         $res->last_updated = '2023-11-13';
         $res->sections = array(
             'description' => 'Calcula el coste de traducción según el número de palabras y las tarifas configuradas.',
-            'changelog' => '== Changelog ==\n\n= 1.0.1 =\n* Cambios',
+            'changelog' => '== Changelog ==\n\n= 1.0.0 =\n* Cambios',
         );
 
         return $res;
