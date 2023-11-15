@@ -41,31 +41,12 @@ add_action( 'wp_ajax_nopriv_limpiar_idiomas', 'limpiar_idiomas' );
 add_action( 'wp_ajax_limpiar_idiomas', 'limpiar_idiomas' );
 
 
-/*add_filter('plugins_api', 'my_plugin_api_call', 10, 3);
 
-function my_plugin_api_call($res, $action, $args) {
-    if ($action === 'plugin_information' && isset($args->slug) && $args->slug === 'word-counter') {
-        $res = new stdClass();
-        $res->slug = 'word-counter';
-        $res->name = 'Calculadora de Traducción';
-        $res->version = '1.0.0';
-        $res->tested = 'WordPress 6.4.1';
-        $res->requires = 'WordPress 6.0.0';
-        $res->author = 'IMK';
-        $res->download_link = 'https://github.com/rmoyaimkes/word-counter/archive/refs/tags/v1.0.0.zip';
-        $res->trunk = 'https://github.com/rmoyaimkes/word-counter/';
-        $res->last_updated = '2023-11-13';
-        $res->sections = array(
-            'description' => 'Calcula el coste de traducción según el número de palabras y las tarifas configuradas.',
-            'changelog' => '== Changelog ==\n\n= 1.0.0 =\n* Primera subida de ficheros.',
-        );
 
-        return $res;
-    }
-    return $res;
-}
+add_action( 'admin_init', function() {
+    wp_enqueue_script( 'script-acciones-idionas', plugin_dir_path(__FILE__).'include/js/front-end-actions-scripts.js');
+} );
 
-*/
 
 
 
@@ -837,6 +818,14 @@ function mostrar_pagina_configuracion() {
     // Procesar el formulario para eliminar tarifa de traducción
     if (isset($_POST['eliminar_tarifa'])) {
         $tarifa_a_eliminar = intval($_POST['eliminar_tarifa']);
+
+        function ConfirmDelete()
+{
+  return confirm("Are you sure you want to delete?");
+}
+
+
+
         if ($tarifa_a_eliminar >= 0) {
             $tarifas_guardadas = get_option('traduccion_calculadora_tarifas', array());
             if (isset($tarifas_guardadas[$tarifa_a_eliminar])) {
@@ -972,6 +961,9 @@ function mostrar_pagina_configuracion() {
             ?>
         </table>
     </div>
+
+
+
     <?php
 
 }
