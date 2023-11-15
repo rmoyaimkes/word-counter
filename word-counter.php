@@ -2,7 +2,7 @@
 /*
 Plugin Name: Calculadora de Traducción
 Description: Calcula el coste de traducción según el número de palabras y las tarifas configuradas.
-Version:   1.0.3
+Version:   1.0.4
 Author:   Digital Multimedia Corp., S.L.
 Author URI: http://www.imk.es
 License:   public gpl
@@ -11,6 +11,7 @@ Tested up to: 6.0
 Requires PHP: 7.4
 GitHub Plugin URI: https://github.com/rmoyaimkes/word-counter/
 */
+
 
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -25,28 +26,42 @@ use PhpOffice\PhpWord\IOFactory as phpdoc;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use setasign\Fpdi\Fpdi;
 
-//use PhpOffice\PhpPresentation\IOFactory as powerpoint;
-
-
-
- use PhpOffice\PhpPresentation\PhpPresentation;
- use PhpOffice\PhpPresentation\IOFactory;
-
+use PhpOffice\PhpPresentation\IOFactory as powerpoint;
 
 use Smalot\PdfParser\Parser;
-
 
 
 add_action( 'wp_ajax_nopriv_limpiar_idiomas', 'limpiar_idiomas' );
 add_action( 'wp_ajax_limpiar_idiomas', 'limpiar_idiomas' );
 
+function cargar_script_admin() {
+    // Ruta del script en tu tema o plugin
+     $ruta_script = plugin_dir_path(__FILE__).'include/js/front-end-actions-scripts.js';
+    // Registrar el script
+    wp_register_script('traducciones-script-admin', $ruta_script, array('jquery'), '1.0', true);
+
+    // Enqueue el script
+    wp_enqueue_script('traducciones-script-admin');
+}
+
+add_action('admin_enqueue_scripts', 'cargar_script_admin');
 
 
 
-add_action( 'admin_init', function() {
-    wp_enqueue_script( 'script-acciones-idionas', plugin_dir_path(__FILE__).'include/js/front-end-actions-scripts.js');
-} );
 
+
+function cargar_script_frontend() {
+    // Ruta del script en tu tema o plugin
+    $ruta_script = plugin_dir_path(__FILE__).'include/js/front-end-actions-scripts.js';
+
+    // Registrar el script
+    wp_register_script('traducciones-script-frontend', $ruta_script, array('jquery'), '1.0', true);
+
+    // Enqueue el script
+    wp_enqueue_script('traducciones-script-frontend');
+}
+
+add_action('wp_enqueue_scripts', 'cargar_script_frontend');
 
 
 
@@ -123,14 +138,14 @@ function normalizarnombreFichero( $nombre ){
 // Función para mostrar el formulario
 function traduccion_calculadora_form() {
 
-	//fabri: begin
-	//var_dump($_POST);
-	$word_counter_msg = null;
+    //fabri: begin
+    //var_dump($_POST);
+    $word_counter_msg = null;
     
     $word_counter_msg2="";
-	$word_counter_msg.= var_export($_POST, true);
-	//fabri: end
-	
+    $word_counter_msg.= var_export($_POST, true);
+    //fabri: end
+    
 
     // Verificar si el formulario se envió
     if (isset($_POST['calcular_traduccion'])) {
@@ -139,7 +154,7 @@ function traduccion_calculadora_form() {
         $nombre = sanitize_text_field($_POST['nombre']);
         $empresa = sanitize_text_field($_POST['empresa']);
         $email = sanitize_email($_POST['email']);
-		$tel = sanitize_text_Field($_POST['tel']);
+        $tel = sanitize_text_Field($_POST['tel']);
         $idioma_origen = sanitize_text_field($_POST['idioma_origen']);
         $idioma_destino = sanitize_text_field($_POST['idioma_destino']);
         $archivo = $_FILES['archivo'];
@@ -171,8 +186,8 @@ function traduccion_calculadora_form() {
             $message .= "<p>Empresa:". $empresa."</p>";
             $message .= "<p>Correo Electrónico:". $email."</p>";
             $message .= "<p>Teléfono:". $tel."</p>";
-			$message .= "<p>Idioma origen:". $idioma_origen."</p>";
-			$message .= "<p>Idioma destino:". $idioma_destino."</p>";
+            $message .= "<p>Idioma origen:". $idioma_origen."</p>";
+            $message .= "<p>Idioma destino:". $idioma_destino."</p>";
             $message .= "<p>Número de palabras:". $numero_palabras."</p>";
             if ($tarifa_normal !== false){
 
@@ -186,7 +201,7 @@ function traduccion_calculadora_form() {
                 $message .= "<p>Coste de traducción urgente:". $coste_traduccion_urgente." €</p>";
             }
                 
-				 // Define el archivo adjunto
+                 // Define el archivo adjunto
                // $attachment = array(WP_CONTENT_DIR . '/uploads/presupuestos/'.$archivo['name']);
 
 
@@ -197,36 +212,36 @@ function traduccion_calculadora_form() {
                 // Envía el correo electrónico
                 wp_mail('rmoya@imk.es', $subject,$message,$headers, $attachment);
                 
-				if (isset($_POST['newsletter'])) {
-					// El checkbox ha sido marcado
-					$curl = curl_init();
+                if (isset($_POST['newsletter'])) {
+                    // El checkbox ha sido marcado
+                    $curl = curl_init();
 
-					curl_setopt_array($curl, array(
-					  CURLOPT_URL => "https://ovstranslations.ipzmarketing.com/api/v1/subscribers",
-					  CURLOPT_RETURNTRANSFER => true,
-					  CURLOPT_ENCODING => "",
-					  CURLOPT_MAXREDIRS => 10,
-					  CURLOPT_TIMEOUT => 30,
-					  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-					  CURLOPT_CUSTOMREQUEST => "POST",
-					  CURLOPT_POSTFIELDS => "{\"status\":\"active\",\"email\":\"$email\",\"name\":\"$name\",\"group_ids\":[1]}",
-					  CURLOPT_HTTPHEADER => array(
-						"content-type: application/json",
-						"x-auth-token: 8Z7mZcX8a5oLoz9Nsgu_sSWFc3b1pMdnKL92f2kh"
-					  ),
-					));
+                    curl_setopt_array($curl, array(
+                      CURLOPT_URL => "https://ovstranslations.ipzmarketing.com/api/v1/subscribers",
+                      CURLOPT_RETURNTRANSFER => true,
+                      CURLOPT_ENCODING => "",
+                      CURLOPT_MAXREDIRS => 10,
+                      CURLOPT_TIMEOUT => 30,
+                      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                      CURLOPT_CUSTOMREQUEST => "POST",
+                      CURLOPT_POSTFIELDS => "{\"status\":\"active\",\"email\":\"$email\",\"name\":\"$name\",\"group_ids\":[1]}",
+                      CURLOPT_HTTPHEADER => array(
+                        "content-type: application/json",
+                        "x-auth-token: 8Z7mZcX8a5oLoz9Nsgu_sSWFc3b1pMdnKL92f2kh"
+                      ),
+                    ));
 
-					$response = curl_exec($curl);
-					$err = curl_error($curl);
+                    $response = curl_exec($curl);
+                    $err = curl_error($curl);
 
-					curl_close($curl);
-					
-				}
-				
-				//fabri: begin
+                    curl_close($curl);
+                    
+                }
+                
+                //fabri: begin
 
                 $word_counter_msg2.='<p class="alert alert-info">Presupuesto orientativo, sera revisado por Overseas Translations para confirmar el coste </p>';
-				$word_counter_msg2.= 'Número de palabras: ' . $numero_palabras . '<br>';
+                $word_counter_msg2.= 'Número de palabras: ' . $numero_palabras . '<br>';
 
                 if ($tarifa_normal !== false){
 
@@ -240,13 +255,13 @@ function traduccion_calculadora_form() {
                     $word_counter_msg2 .= "Coste de traducción urgente:". $coste_traduccion_urgente." €</br>";
                 }
                 
-				//fabri: end
+                //fabri: end
 
         } else {
-        	//fabri: begin
+            //fabri: begin
             //echo 'No se pudo procesar el archivo.';
-        	 $word_counter_msg2.= 'No se pudo procesar el archivo.';
-        	//fabri: end
+             $word_counter_msg2.= 'No se pudo procesar el archivo.';
+            //fabri: end
         }
       
         //fabri: begin
@@ -262,15 +277,15 @@ function traduccion_calculadora_form() {
     
     //fabri: begin
     else {
-    	
-    	if(!empty($_SESSION['word_counter_msg'])) {
-    		echo($_SESSION['word_counter_msg2']);
-	    	$_SESSION['word_counter_msg']=null;
+        
+        if(!empty($_SESSION['word_counter_msg'])) {
+            echo($_SESSION['word_counter_msg2']);
+            $_SESSION['word_counter_msg']=null;
             $_SESSION['word_counter_msg2']=null;
-    	}
+        }
     }
     //fabri: end
-    	
+        
     // Mostrar el formulario
 
 
@@ -293,8 +308,8 @@ function traduccion_calculadora_form() {
 
         <label for="email">Correo Electrónico:</label>
         <input type="email" id="email" name="email" required><br>
-		
-		<label for="tel">Teléfono:</label>
+        
+        <label for="tel">Teléfono:</label>
         <input type="tel" name="tel" required><br>
 
         <label for="idioma_origen">Idioma de Origen:</label>
@@ -309,25 +324,25 @@ function traduccion_calculadora_form() {
 
         <label for="archivo">Archivo a Traducir: ( doc, docx, pdf, odt, txt, xls, xlsx, ppt, pptx, pps )</label>
         <input type="file" acept="doc,dox,pdf,odt,txt,xls,xlsx,pptx,ppt,pps" name="archivo" id="archivo" ><br>
-		
-		<div class="checkbox">
-			<div class="checker" id="newsletter">
-				<input type="checkbox" value="0"  name="newsletter" autocomplete="off">
-				<label for="newsletter">Suscribirme a la newsletter</label>
-			</div>
-		</div>
-		
-		<div class="required checkbox">
-			<div class="checker" id="politica_privacidad">
-				<input type="checkbox" value="0" required  name="politica_privacidad" autocomplete="off">
-				<label for="politica_privacidad">Acepto la <a href="/politica-privacidad">política de privacidad</a></label>
-			</div>
-		</div>
-		
+        
+        <div class="checkbox">
+            <div class="checker" id="newsletter">
+                <input type="checkbox" value="0"  name="newsletter" autocomplete="off">
+                <label for="newsletter">Suscribirme a la newsletter</label>
+            </div>
+        </div>
+        
+        <div class="required checkbox">
+            <div class="checker" id="politica_privacidad">
+                <input type="checkbox" value="0" required  name="politica_privacidad" autocomplete="off">
+                <label for="politica_privacidad">Acepto la <a href="/politica-privacidad">política de privacidad</a></label>
+            </div>
+        </div>
+        
         <input type="submit" name="calcular_traduccion" value="Calcular Traducción">
 
     </form>
-	
+    
     <?php
 }
 
@@ -460,23 +475,18 @@ function deleteDirectory($dir) {
 
 
 function contarPalabrasEnPpt($filePath){
+    $totalWords = 0;
 
-     $totalWords = 0;
+    // Cargar el archivo PPTX
+    $pptx = powerpoint::load($filePath);
 
-    $fileHandle = fopen($filePath, "r");
-    $line = fread($fileHandle, filesize($filePath));
-    $lines = explode(chr(0x0f), $line);
-
-    foreach ($lines as $thisline) {
-        if (strpos($thisline, chr(0x00).chr(0x00).chr(0x00)) == 1) {
-            $text_line = substr($thisline, 4);
-            $end_pos = strpos($text_line, chr(0x00));
-            $text_line = substr($text_line, 0, $end_pos);
-            $text_line = preg_replace("/[^a-zA-Z0-9\s\,\.\-\n\r\t@\/\_\(\)]/"," ",$text_line);
-            
-            if (strlen($text_line) > 1) {
-                $totalWords += str_word_count($text_line);
-            }
+    // Recorrer cada slide
+    foreach ($pptx->getAllSlides() as $slide) {
+        // Recorrer cada forma en el slide
+        foreach ($slide->getShapeCollection() as $shape) {
+            // Obtener el texto de la forma y contar las palabras
+            $text = strip_tags($shape->getText());
+            $totalWords += str_word_count($text);
         }
     }
 
@@ -818,14 +828,6 @@ function mostrar_pagina_configuracion() {
     // Procesar el formulario para eliminar tarifa de traducción
     if (isset($_POST['eliminar_tarifa'])) {
         $tarifa_a_eliminar = intval($_POST['eliminar_tarifa']);
-
-        function ConfirmDelete()
-{
-  return confirm("Are you sure you want to delete?");
-}
-
-
-
         if ($tarifa_a_eliminar >= 0) {
             $tarifas_guardadas = get_option('traduccion_calculadora_tarifas', array());
             if (isset($tarifas_guardadas[$tarifa_a_eliminar])) {
@@ -961,9 +963,6 @@ function mostrar_pagina_configuracion() {
             ?>
         </table>
     </div>
-
-
-
     <?php
 
 }
